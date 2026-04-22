@@ -1,0 +1,79 @@
+[package]
+name = "dictum"
+version = "0.1.0"
+description = "Dictum — push-to-talk dictation app for Windows using local Whisper."
+authors = ["guisb"]
+edition = "2021"
+rust-version = "1.77"
+
+[lib]
+name = "dictum_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+# Tauri core
+tauri = { version = "2", features = ["tray-icon"] }
+tauri-plugin-log = "2"
+tauri-plugin-single-instance = "2"
+tauri-plugin-global-shortcut = "2"
+tauri-plugin-clipboard-manager = "2"
+tauri-plugin-notification = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-os = "2"
+tauri-plugin-autostart = "2"
+
+# Serialization & utils
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+anyhow = "1"
+thiserror = "1"
+parking_lot = "0.12"
+once_cell = "1"
+dirs = "5"
+chrono = { version = "0.4", features = ["serde"] }
+log = "0.4"
+
+# Async
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "time", "fs"] }
+
+# Audio capture
+cpal = "0.15"
+rubato = "0.15"
+
+# WAV writing (for subprocess-based transcription)
+hound = "3"
+
+# ZIP extraction (for whisper.cpp CLI binary)
+zip = { version = "2", default-features = false, features = ["deflate"] }
+
+# Model download
+reqwest = { version = "0.12", default-features = false, features = ["stream", "rustls-tls"] }
+futures-util = "0.3"
+sha2 = "0.10"
+
+# Clipboard (used during paste service for save/restore)
+arboard = "3"
+
+[target.'cfg(windows)'.dependencies]
+windows = { version = "0.58", features = [
+    "Win32_Foundation",
+    "Win32_UI_Input_KeyboardAndMouse",
+    "Win32_UI_WindowsAndMessaging",
+    "Win32_System_DataExchange",
+    "Win32_System_Memory",
+    "Win32_System_Threading",
+] }
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true
