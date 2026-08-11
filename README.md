@@ -34,7 +34,7 @@ This project is built using modern, performant frameworks and languages:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/dictum.git
+   git clone https://github.com/guibrandalisee/dictum.git
    cd dictum
    ```
 
